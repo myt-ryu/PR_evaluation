@@ -75,3 +75,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.ios-status-bar {
+  height: env(safe-area-inset-top);
+}

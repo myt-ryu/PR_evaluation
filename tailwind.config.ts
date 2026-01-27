@@ -24,12 +24,12 @@ const config: Config = {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
                 primary: {
-                    DEFAULT: "hsl(var(--primary))",
-                    foreground: "hsl(var(--primary-foreground))",
+                    DEFAULT: "#008F8C", // Corporate Teal
+                    foreground: "#FFFFFF",
                 },
                 secondary: {
-                    DEFAULT: "hsl(var(--secondary))",
-                    foreground: "hsl(var(--secondary-foreground))",
+                    DEFAULT: "#0F172A", // Slate 900
+                    foreground: "#FFFFFF",
                 },
                 destructive: {
                     DEFAULT: "hsl(var(--destructive))",
@@ -51,11 +51,18 @@ const config: Config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+                // Custom colors from the design
+                "card-light": "#FFFFFF",
+                "card-dark": "#1E293B",
+            },
+            fontFamily: {
+                sans: ["var(--font-noto-sans-jp)", "var(--font-inter)", "sans-serif"],
+                display: ["var(--font-noto-sans-jp)", "var(--font-inter)", "sans-serif"],
             },
             borderRadius: {
-                lg: "var(--radius)",
-                md: "calc(var(--radius) - 2px)",
-                sm: "calc(var(--radius) - 4px)",
+                lg: "12px",
+                md: "8px",
+                sm: "4px",
             },
             keyframes: {
                 "accordion-down": {
