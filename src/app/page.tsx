@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import { Variants } from 'framer-motion';
 import { EvaluationFormValues } from "@/lib/schemas";
 import { calculateScores } from "@/lib/calculator";
 import { EvaluationItem } from '@/types/evaluation';
@@ -39,7 +40,7 @@ const INITIAL_DATA: EvaluationItem[] = [
     },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
@@ -47,7 +48,7 @@ const containerVariants = {
     }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
         y: 0,
@@ -60,7 +61,7 @@ export default function Dashboard() {
     const [data, setData] = useState<EvaluationItem[]>(INITIAL_DATA);
 
     const handleAddEvaluation = (values: EvaluationFormValues) => {
-        const newItem: any = {
+        const newItem: EvaluationItem = {
             id: Math.random().toString(),
             title: values.title,
             mediaName: values.mediaName,
@@ -71,6 +72,10 @@ export default function Dashboard() {
             tone: values.tone,
             messageDelivery: values.messageDelivery,
             actionDriver: values.actionDriver,
+            // Temporary, will be recalculated
+            mediaImpactScore: 0,
+            contentQualityScore: 0,
+            strategicImpactScore: 0
         };
 
         const calculated = calculateScores(newItem);
@@ -82,12 +87,19 @@ export default function Dashboard() {
     const highQualityRatio = Math.round((data.filter(i => i.contentQualityScore >= 35).length / data.length) * 100);
 
     return (
-        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-sans">
-            <div className="ios-status-bar bg-white dark:bg-slate-900 sticky top-0 z-50"></div>
-
+        <div className="bg-background text-foreground min-h-screen font-sans pb-20 selection:bg-primary selection:text-black">
             <DashboardHeader onAddEvaluation={handleAddEvaluation} />
 
-            <main className="mx-auto max-w-md md:max-w-5xl p-5 space-y-6">
+            <main className="mx-auto max-w-7xl px-6 pt-32 space-y-6 relative z-10">
+                {/* Dashboard Title Section */}
+                <div className="flex flex-col gap-1 mb-8">
+                    <h2 className="text-3xl font-black tracking-tight text-white uppercase italic">Dashboard</h2>
+                    <p className="text-xs text-muted-foreground tracking-widest uppercase">
+                        Science Communication Public Relations Analysis v0.2.0
+                    </p>
+                </div>
+
+                {/* KPI Section - Card Row */}
                 <KpiSection
                     avgScore={avgScore}
                     highSegmentMatchCount={highSegmentMatchCount}
@@ -97,16 +109,21 @@ export default function Dashboard() {
                     itemVariants={itemVariants}
                 />
 
-                {/* Desktop: Matrix left, List right.  Mobile: Matrix top, List bottom */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <ImpactMatrix data={data} />
-                    <RecentArticles data={data} />
+                {/* Grid Layout Mirroring Stitch Mock */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    {/* Impact Matrix - Primary Visualization (7 Cols) */}
+                    <div className="md:col-span-7">
+                        <ImpactMatrix data={data} />
+                    </div>
+
+                    {/* Recent Articles - Secondary List (5 Cols) */}
+                    <div className="md:col-span-5">
+                        <RecentArticles data={data} />
+                    </div>
                 </div>
             </main>
 
             <BottomNav />
-            {/* Spacer for bottom nav */}
-            <div className="h-24 md:hidden"></div>
         </div>
     );
 }

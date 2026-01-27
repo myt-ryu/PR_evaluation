@@ -1,15 +1,16 @@
 
 "use client";
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface KpiSectionProps {
     avgScore: string;
     highSegmentMatchCount: number;
     totalItems: number;
     highQualityRatio: number;
-    containerVariants: any;
-    itemVariants: any;
+    containerVariants: Variants;
+    itemVariants: Variants;
 }
 
 export function KpiSection({
@@ -23,81 +24,91 @@ export function KpiSection({
 
     return (
         <motion.div
-            className="grid grid-cols-1 gap-4"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             viewport={{ once: true }}
         >
-            {/* SIS Card */}
-            <motion.div variants={itemVariants} className="bg-card-light dark:bg-card-dark p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden">
-                <div className="flex justify-between items-start mb-4">
+            {/* Main Score - SIS Card */}
+            <motion.div variants={itemVariants} className="glass-card p-6 md:col-span-1 border-primary/20 bg-primary/5 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10 flex justify-between items-start mb-6">
                     <div>
-                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 tracking-wide">平均戦略的インパクト (SIS)</p>
-                        <h3 className="text-4xl font-black mt-1 text-slate-900 dark:text-white leading-none">{avgScore}</h3>
+                        <p className="text-[10px] font-black text-primary tracking-[0.2em] uppercase mb-2">平均戦略インパクト (SIS)</p>
+                        <h3 className="text-6xl font-black text-white leading-none tracking-tighter neon-text">{avgScore}</h3>
                     </div>
-                    <div className="p-2 bg-teal-50 dark:bg-teal-900/30 rounded-xl">
-                        <span className="material-symbols-outlined text-primary">trending_up</span>
+                    <div className="p-2.5 bg-primary/10 rounded-xl border border-primary/20">
+                        <span className="material-symbols-outlined text-primary text-xl">analytics</span>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">+6.4%</span>
-                    <p className="text-xs text-slate-400">目標値: &gt; 50.0</p>
-                </div>
-                <div className="absolute bottom-0 right-0 left-0 h-1.5 bg-slate-100 dark:bg-slate-800">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${Math.min(parseFloat(avgScore), 100)}%` }}
-                        transition={{ duration: 1.2, ease: "circOut" }}
-                        className="h-full bg-primary"
-                    />
+                <div className="relative z-10 flex items-center gap-3 mb-4">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 shadow-[0_0_10px_rgba(45,212,191,0.2)]">+6.4%</span>
+                    <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest leading-none">TARGET: 50.0</p>
                 </div>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-4">
-                {/* Reach Card */}
-                <motion.div variants={itemVariants} className="bg-card-light dark:bg-card-dark p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-2 mb-3">
-                        <span className="material-symbols-outlined text-indigo-500 text-xl">pie_chart</span>
-                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 tracking-tight">重点セグメント到達率</p>
+            {/* Reach Card */}
+            <motion.div variants={itemVariants} className="glass-card p-6 border-white/5 group hover:border-white/20">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-secondary/10 rounded-lg border border-secondary/20">
+                        <span className="material-symbols-outlined text-secondary text-base">target</span>
                     </div>
-                    <div className="flex items-end justify-between">
-                        <div className="text-2xl font-black text-slate-900 dark:text-white">{highSegmentMatchCount} / {totalItems}</div>
-                        <div className="w-10 h-10 relative flex items-center justify-center">
-                            <svg className="w-full h-full -rotate-90">
-                                <circle className="text-slate-100 dark:text-slate-700" cx="20" cy="20" fill="transparent" r="16" stroke="currentColor" strokeWidth="4"></circle>
-                                <circle
-                                    className="text-indigo-500"
-                                    cx="20" cy="20"
-                                    fill="transparent" r="16"
-                                    stroke="currentColor"
-                                    strokeDasharray="100.5"
-                                    strokeDashoffset={100.5 - (100.5 * (highSegmentMatchCount / Math.max(totalItems, 1)))}
-                                    strokeWidth="4"
-                                ></circle>
-                            </svg>
-                        </div>
+                    <p className="text-[10px] font-black text-muted-foreground tracking-[0.2em] uppercase">重点セグメント到達率</p>
+                </div>
+                <div className="flex items-end justify-between">
+                    <div>
+                        <div className="text-4xl font-black text-white tracking-tighter">{highSegmentMatchCount} <span className="text-lg text-muted-foreground tracking-tight ml-1">/ {totalItems}</span></div>
+                        <p className="text-[9px] mt-2 text-muted-foreground/60 uppercase tracking-widest font-bold">高関心層ターゲット記事数</p>
                     </div>
-                    <p className="text-[9px] mt-2 text-slate-400 leading-tight">高関心層をターゲットにした記事数</p>
-                </motion.div>
+                    <div className="w-14 h-14 relative flex items-center justify-center">
+                        <svg className="w-full h-full -rotate-90">
+                            <circle className="text-white/5" cx="28" cy="28" fill="transparent" r="22" stroke="currentColor" strokeWidth="3"></circle>
+                            <circle
+                                className="text-secondary drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
+                                cx="28" cy="28"
+                                fill="transparent" r="22"
+                                stroke="currentColor"
+                                strokeDasharray="138"
+                                strokeDashoffset={138 - (138 * (highSegmentMatchCount / Math.max(totalItems, 1)))}
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                            ></circle>
+                        </svg>
+                        <span className="absolute text-[10px] font-black text-secondary">{Math.round((highSegmentMatchCount / Math.max(totalItems, 1)) * 100)}%</span>
+                    </div>
+                </div>
+            </motion.div>
 
-                {/* Quality Ratio Card */}
-                <motion.div variants={itemVariants} className="bg-card-light dark:bg-card-dark p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-2 mb-3">
-                        <span className="material-symbols-outlined text-amber-500 text-xl">equalizer</span>
-                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 tracking-tight">高評価記事比率</p>
+            {/* Quality Ratio Card */}
+            <motion.div variants={itemVariants} className="glass-card p-6 border-white/5 group hover:border-white/20">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-primary/10 rounded-lg border border-primary/20">
+                        <span className="material-symbols-outlined text-primary text-base">verified</span>
                     </div>
-                    <div className="flex items-end justify-between">
-                        <div className="text-2xl font-black text-slate-900 dark:text-white">{highQualityRatio}%</div>
-                        <div className="flex gap-0.5 items-end h-8">
-                            <div className={`w-1.5 rounded-full ${highQualityRatio > 20 ? 'h-3 bg-amber-200 dark:bg-amber-900' : 'h-1 bg-slate-100'}`}></div>
-                            <div className={`w-1.5 rounded-full ${highQualityRatio > 50 ? 'h-5 bg-amber-400 dark:bg-amber-700' : 'h-1 bg-slate-100'}`}></div>
-                            <div className={`w-1.5 rounded-full ${highQualityRatio > 80 ? 'h-8 bg-amber-500' : 'h-1 bg-slate-100'}`}></div>
-                        </div>
+                    <p className="text-[10px] font-black text-muted-foreground tracking-[0.2em] uppercase">高評価記事比率</p>
+                </div>
+                <div className="flex items-end justify-between">
+                    <div>
+                        <div className="text-4xl font-black text-white tracking-tighter">{highQualityRatio}<span className="text-xl ml-0.5">%</span></div>
+                        <p className="text-[9px] mt-2 text-muted-foreground/60 uppercase tracking-widest font-bold">QSスコア 35点以上</p>
                     </div>
-                    <p className="text-[9px] mt-2 text-slate-400 leading-tight">クオリティスコア 35点以上の記事</p>
-                </motion.div>
-            </div>
+                    <div className="flex gap-1.5 items-end h-10 mb-1">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    "w-1.5 rounded-full transition-all duration-700",
+                                    highQualityRatio >= i * 20
+                                        ? "bg-primary shadow-[0_0_8px_rgba(45,212,191,0.4)]"
+                                        : "bg-white/10"
+                                )}
+                                style={{ height: `${20 + i * 16}%` }}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </motion.div>
         </motion.div>
     );
 }

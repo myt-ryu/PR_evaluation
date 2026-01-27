@@ -24,17 +24,18 @@ const config: Config = {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
                 primary: {
-                    DEFAULT: "#008F8C", // Corporate Teal
-                    foreground: "#FFFFFF",
+                    DEFAULT: "hsl(var(--primary))",
+                    foreground: "hsl(var(--primary-foreground))",
                 },
                 secondary: {
-                    DEFAULT: "#0F172A", // Slate 900
-                    foreground: "#FFFFFF",
+                    DEFAULT: "hsl(var(--secondary))",
+                    foreground: "hsl(var(--secondary-foreground))",
                 },
                 destructive: {
                     DEFAULT: "hsl(var(--destructive))",
                     foreground: "hsl(var(--destructive-foreground))",
                 },
+                // Removing manual palette overrides to enforce CSS variable usage
                 muted: {
                     DEFAULT: "hsl(var(--muted))",
                     foreground: "hsl(var(--muted-foreground))",
@@ -51,18 +52,29 @@ const config: Config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-                // Custom colors from the design
-                "card-light": "#FFFFFF",
-                "card-dark": "#1E293B",
+                // Custom additional colors for "Premium" feel
+                teal: {
+                    50: "#f0fdfa",
+                    100: "#ccfbf1",
+                    500: "#14b8a6",
+                    600: "#0d9488",
+                    700: "#0f766e",
+                    900: "#134e4a",
+                },
+                slate: {
+                    850: "#1e293b", // Deep slate
+                    950: "#020617", // Almost black
+                }
             },
             fontFamily: {
-                sans: ["var(--font-noto-sans-jp)", "var(--font-inter)", "sans-serif"],
-                display: ["var(--font-noto-sans-jp)", "var(--font-inter)", "sans-serif"],
+                sans: ["var(--font-inter)", "var(--font-noto-sans-jp)", "sans-serif"],
+                display: ["var(--font-inter)", "var(--font-noto-sans-jp)", "sans-serif"],
             },
             borderRadius: {
-                lg: "12px",
-                md: "8px",
-                sm: "4px",
+                lg: "var(--radius)",
+                md: "calc(var(--radius) - 2px)",
+                sm: "calc(var(--radius) - 4px)",
+                DEFAULT: "12px",
             },
             keyframes: {
                 "accordion-down": {
