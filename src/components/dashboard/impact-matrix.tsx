@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell } from 'recharts';
 import { EvaluationItem } from '@/types/evaluation';
@@ -10,13 +11,20 @@ interface ImpactMatrixProps {
 }
 
 export function ImpactMatrix({ data }: ImpactMatrixProps) {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsMounted(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             viewport={{ once: true }}
-            className="h-full flex flex-col"
+            className="flex flex-col"
         >
             <div className="flex items-center justify-between mb-4">
                 <h4 className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase flex items-center gap-2">
@@ -25,29 +33,36 @@ export function ImpactMatrix({ data }: ImpactMatrixProps) {
                 </h4>
                 <p className="text-[10px] font-bold text-muted-foreground/50 tracking-widest uppercase">Content (Y) vs Media (X)</p>
             </div>
-            <div className="glass-card p-6 flex-1 relative overflow-hidden flex flex-col">
-                <div className="relative w-full flex-1 border-l border-b border-white/5 flex flex-wrap bg-primary/[0.02] rounded-bl-xl mt-2 mb-4">
-                    {/* Axis Labels */}
-                    <div className="absolute -left-8 top-1/2 -rotate-90 text-[8px] font-black text-muted-foreground/40 tracking-[0.3em] uppercase origin-center translate-y-[-50%]">Content Quality</div>
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[8px] font-black text-muted-foreground/40 tracking-[0.3em] uppercase">Media Authority</div>
 
-                    {/* Zones */}
-                    <div className="w-1/2 h-1/2 border-r border-b border-white/5 p-2 flex items-center justify-center relative">
-                        <span className="text-[9px] text-muted-foreground/20 font-black uppercase tracking-[0.2em]">Growth Zone</span>
-                    </div>
-                    <div className="w-1/2 h-1/2 border-b border-white/5 bg-primary/[0.03] p-2 flex items-center justify-center relative">
-                        <span className="text-[9px] text-primary/40 font-black uppercase tracking-[0.2em]">Strategic High</span>
-                        <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-primary/20 rounded-full animate-pulse"></div>
-                    </div>
-                    <div className="w-1/2 h-1/2 border-r border-white/5 p-2 flex items-center justify-center relative">
-                        <span className="text-[9px] text-muted-foreground/20 font-black uppercase tracking-[0.2em]">Baseline</span>
-                    </div>
-                    <div className="w-1/2 h-1/2 p-2 flex items-center justify-center relative">
-                        <span className="text-[9px] text-muted-foreground/20 font-black uppercase tracking-[0.2em]">Potential</span>
+            <div className="glass-card p-6 relative overflow-hidden flex flex-col">
+                {/* The Sized Wrapper - Primary container for ResponsiveContainer measurement */}
+                <div className="relative w-full h-[360px]">
+
+                    {/* Background & Decorative Layer (Absolute Z-0) */}
+                    <div className="absolute inset-0 z-0 pointer-events-none border-l border-b border-white/5 bg-primary/[0.01]">
+                        {/* Zones */}
+                        <div className="absolute inset-0 flex flex-wrap opacity-40">
+                            <div className="w-1/2 h-1/2 border-r border-b border-white/5 p-2 flex items-center justify-center relative">
+                                <span className="text-[8px] text-muted-foreground/20 font-black uppercase tracking-[0.2em]">Growth Zone</span>
+                            </div>
+                            <div className="w-1/2 h-1/2 border-b border-white/5 bg-primary/[0.03] p-2 flex items-center justify-center relative">
+                                <span className="text-[8px] text-primary/30 font-black uppercase tracking-[0.2em]">Strategic High</span>
+                            </div>
+                            <div className="w-1/2 h-1/2 border-r border-white/5 p-2 flex items-center justify-center relative">
+                                <span className="text-[8px] text-muted-foreground/10 font-black uppercase tracking-[0.2em]">Baseline</span>
+                            </div>
+                            <div className="w-1/2 h-1/2 p-2 flex items-center justify-center relative">
+                                <span className="text-[8px] text-muted-foreground/10 font-black uppercase tracking-[0.2em]">Potential</span>
+                            </div>
+                        </div>
+
+                        {/* Axis Labels */}
+                        <div className="absolute -left-10 top-1/2 -rotate-90 text-[7px] font-black text-muted-foreground/20 tracking-[0.4em] uppercase origin-center translate-y-[-50%]">Content Quality</div>
+                        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[7px] font-black text-muted-foreground/20 tracking-[0.4em] uppercase">Media Authority</div>
                     </div>
 
-                    {/* Recharts Overlay */}
-                    <div className="absolute inset-0 z-20">
+                    {/* ResponsiveContainer as a direct child of the sized relative div */}
+                    {isMounted && (
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                                 <XAxis type="number" dataKey="mediaImpactScore" domain={[0, 60]} hide />
@@ -88,20 +103,21 @@ export function ImpactMatrix({ data }: ImpactMatrixProps) {
                                 </Scatter>
                             </ScatterChart>
                         </ResponsiveContainer>
-                    </div>
+                    )}
                 </div>
 
-                <div className="flex gap-6 mt-2 justify-center">
+                {/* Legend */}
+                <div className="flex gap-6 mt-6 justify-center">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(45,212,191,0.5)]"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(45,212,191,0.5)]"></div>
                         <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Critical</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(59,130,246,0.3)]"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-secondary shadow-[0_0_8px_rgba(59,130,246,0.3)]"></div>
                         <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Standard</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.3)]"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.3)]"></div>
                         <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Low Yield</span>
                     </div>
                 </div>

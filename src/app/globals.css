@@ -72,11 +72,13 @@
   }
 
   .neon-text {
-    @apply text-primary drop-shadow-[0_0_8px_rgba(45, 212, 191, 0.5)];
+    @apply text-primary;
+    filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.5));
   }
 
   .neon-border {
-    @apply border-primary drop-shadow-[0_0_8px_rgba(45, 212, 191, 0.3)];
+    @apply border-primary;
+    filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.3));
   }
 }
 

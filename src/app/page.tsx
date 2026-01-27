@@ -82,21 +82,38 @@ export default function Dashboard() {
         setData([calculated, ...data]);
     };
 
+    // 個別削除
+    const handleDelete = (id: string) => {
+        setData(data.filter(item => item.id !== id));
+    };
+
+    // 選択削除
+    const handleBulkDelete = (ids: string[]) => {
+        setData(data.filter(item => !ids.includes(item.id)));
+    };
+
+    // 全削除
+    const handleClearAll = () => {
+        setData([]);
+    };
+
     const avgScore = (data.reduce((acc, item) => acc + item.strategicImpactScore, 0) / data.length).toFixed(1);
     const highSegmentMatchCount = data.filter(i => i.segmentMatch === 'High').length;
     const highQualityRatio = Math.round((data.filter(i => i.contentQualityScore >= 35).length / data.length) * 100);
 
     return (
-        <div className="bg-background text-foreground min-h-screen font-sans pb-20 selection:bg-primary selection:text-black">
+        <div className="bg-[#020617] text-foreground min-h-screen font-sans pb-20 selection:bg-primary selection:text-black">
             <DashboardHeader onAddEvaluation={handleAddEvaluation} />
 
-            <main className="mx-auto max-w-7xl px-6 pt-32 space-y-6 relative z-10">
-                {/* Dashboard Title Section */}
-                <div className="flex flex-col gap-1 mb-8">
-                    <h2 className="text-3xl font-black tracking-tight text-white uppercase italic">Dashboard</h2>
-                    <p className="text-xs text-muted-foreground tracking-widest uppercase">
-                        Science Communication Public Relations Analysis v0.2.0
-                    </p>
+            <main className="mx-auto w-full max-w-[1400px] px-8 pt-24 space-y-4 relative z-10">
+                {/* Dashboard Title Section - P0 Alignment */}
+                <div className="flex flex-col gap-0.5 mb-6">
+                    <h2 className="text-4xl font-black tracking-tighter text-white">ダッシュボード</h2>
+                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-muted-foreground/60 uppercase">
+                        <span>こんにちは、山田 太郎 様</span>
+                        <span className="w-1 h-1 rounded-full bg-white/10"></span>
+                        <span className="opacity-80">公共政策研究室、サイエンスコミュニケーションの実績を可視化します。</span>
+                    </div>
                 </div>
 
                 {/* KPI Section - Card Row */}
@@ -112,13 +129,18 @@ export default function Dashboard() {
                 {/* Grid Layout Mirroring Stitch Mock */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                     {/* Impact Matrix - Primary Visualization (7 Cols) */}
-                    <div className="md:col-span-7">
+                    <div className="md:col-span-12 lg:col-span-7">
                         <ImpactMatrix data={data} />
                     </div>
 
                     {/* Recent Articles - Secondary List (5 Cols) */}
                     <div className="md:col-span-5">
-                        <RecentArticles data={data} />
+                        <RecentArticles
+                            data={data}
+                            onDelete={handleDelete}
+                            onBulkDelete={handleBulkDelete}
+                            onClearAll={handleClearAll}
+                        />
                     </div>
                 </div>
             </main>
