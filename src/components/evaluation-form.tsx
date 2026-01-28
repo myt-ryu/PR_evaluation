@@ -27,6 +27,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { evaluationSchema } from "@/lib/schemas";
 import { EvaluationFormValues } from "@/lib/schemas";
+import { MEDIA_MASTER_DATA, getMediaReach } from "@/lib/media-master";
+import { normalizeNumber } from "@/lib/number-utils";
 
 interface EvaluationFormProps {
     onSubmit: (data: EvaluationFormValues) => void;
@@ -81,9 +83,42 @@ export function EvaluationForm({ onSubmit, defaultValues }: EvaluationFormProps)
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">メディア名</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="例: 日本経済新聞" {...field} className="bg-background/50 border-white/10 text-white placeholder:text-muted-foreground/30 focus:border-primary/50 focus:ring-primary/20 h-12 rounded-xl backdrop-blur-sm" />
-                                    </FormControl>
+                                    <Select
+                                        onValueChange={(value) => {
+                                            field.onChange(value);
+                                            // メディア選択時にリーチ数を自動設定
+                                            const reach = getMediaReach(value);
+                                            if (reach > 0) {
+                                                form.setValue('reach', reach);
+                                            }
+                                        }}
+                                        value={field.value}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger className="bg-background/50 border-white/10 text-white h-12 rounded-xl backdrop-blur-sm focus:ring-primary/20 focus:border-primary/50">
+                                                <SelectValue placeholder="メディアを選択" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="bg-[#121D16] border-white/10 text-white max-h-[300px]">
+                                            {MEDIA_MASTER_DATA.map((media) => (
+                                                <SelectItem
+                                                    key={media.name}
+                                                    value={media.name}
+                                                    className="focus:bg-primary/20 focus:text-primary"
+                                                >
+                                                    {media.name}
+                                                    {media.defaultReach > 0 && (
+                                                        <span className="ml-2 text-[10px] text-muted-foreground">
+                                                            ({media.defaultReach.toLocaleString()})
+                                                        </span>
+                                                    )}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormDescription className="text-[10px] text-muted-foreground/50">
+                                        メディアを選択するとリーチ数が自動入力されます
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -111,8 +146,20 @@ export function EvaluationForm({ onSubmit, defaultValues }: EvaluationFormProps)
                                 <FormItem>
                                     <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">リーチ数 (PV/発行部数)</FormLabel>
                                     <FormControl>
-                                        <Input type="number" {...field} onChange={e => field.onChange(+e.target.value)} className="bg-background/50 border-white/10 text-white placeholder:text-muted-foreground/30 focus:border-primary/50 focus:ring-primary/20 h-12 rounded-xl backdrop-blur-sm text-right font-mono" />
+                                        <Input
+                                            type="text"
+                                            value={field.value?.toString() || ''}
+                                            onChange={(e) => {
+                                                const normalized = normalizeNumber(e.target.value);
+                                                field.onChange(+normalized);
+                                            }}
+                                            placeholder="例: 50000"
+                                            className="bg-background/50 border-white/10 text-white placeholder:text-muted-foreground/30 focus:border-primary/50 focus:ring-primary/20 h-12 rounded-xl backdrop-blur-sm text-right font-mono"
+                                        />
                                     </FormControl>
+                                    <FormDescription className="text-[10px] text-muted-foreground/50">
+                                        全角数字も入力可能です
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
