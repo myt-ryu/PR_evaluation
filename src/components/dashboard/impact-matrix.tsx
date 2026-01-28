@@ -63,7 +63,7 @@ export function ImpactMatrix({ data }: ImpactMatrixProps) {
 
                     {/* ResponsiveContainer as a direct child of the sized relative div */}
                     {isMounted && (
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height={360}>
                             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                                 <XAxis type="number" dataKey="mediaImpactScore" domain={[0, 60]} hide />
                                 <YAxis type="number" dataKey="contentQualityScore" domain={[0, 60]} hide />
